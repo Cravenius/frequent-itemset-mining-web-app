@@ -1,5 +1,5 @@
 # frequent-itemset-mining-web-app
-Simple website based data mining (frequent itemset mining) application for retail shops
+Simple website based data mining (frequent itemset mining) application for retail shops (not completed yet)
 
 Technology used:
 - HTML
