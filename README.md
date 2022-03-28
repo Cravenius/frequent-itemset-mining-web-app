@@ -8,7 +8,7 @@ Reference:
 - Dataset -> https://www.kaggle.com/heeraldedhia/groceries-dataset
 - Association Rule Mining -> https://deepnote.com/@Amirhossein-Banavi/Data-Mining-Association-Rules-MwTNXNewTu2tIeBlqTe5WA
 
-Technology used:
+Technologies used:
 - HTML
 - CSS
 - Javascript
@@ -24,7 +24,7 @@ To-do list:
 - Using other mining algorithms
 - Generate rules
 - Generate multiple datatables (result from different algorithm)
-- Display is broken when datatable is used to render more than 10 data
+- Display is broken when datatable is used to render more than 10 entries
 
 # How to use 
 
@@ -38,7 +38,7 @@ Steps:
 - Checklist apriori, set minimum support, choose minimum itemset generation
 - Upload dataset
 - Press "Upload File" button
-- Now you can see the result on Javascript Datatable (fast!)
+- Now you can see the result
 
 # Screenshots
 
