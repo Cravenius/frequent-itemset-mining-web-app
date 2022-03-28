@@ -21,9 +21,10 @@ For demo only:
 - Currently im only implemented the apriori algorithm
 
 To-do list:
-- using other mining algorithms
-- generate rules
-- generate multiple datatables (result from different algorithm)
+- Using other mining algorithms
+- Generate rules
+- Generate multiple datatables (result from different algorithm)
+- Display is broken when datatable is used to render more than 10 data
 
 # How to use 
 
