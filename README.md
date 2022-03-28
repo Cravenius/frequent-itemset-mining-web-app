@@ -1,7 +1,9 @@
 # frequent-itemset-mining-web-app (ongoing progress)
 
 Disclaimer: This project is not completed yet (ongoing)
+
 Description: Simple website based data mining (frequent itemset mining) application for retail shops
+
 Technology used:
 - HTML
 - CSS
@@ -10,3 +12,8 @@ Technology used:
 - Python
 - Flask
 - Material Design Bootstrap 5
+
+To-do list:
+- preprocess the input csv file
+- pass to algorithms
+- show mining as multiple datatables
