@@ -22,6 +22,20 @@ app = Flask(__name__)
 uploads_dir = os.path.join(app.root_path, 'files_repository')
 app.config['UPLOAD_EXTENSIONS'] = ALLOWED_EXTENSIONS
 
+def preproces_dataset(path_filename):
+  dataframe = pd.read_csv(path_filename)
+  dataframe.rename(columns={'Member_number': 'customer_id', 'itemDescription': 'item'},inplace=True)
+  dataframe.drop(columns=['Date'], inplace=True)
+  #print("Items count before deleting duplicates: ", dataframe.shape[0])
+  dataframe.drop_duplicates(inplace=True)
+  #print("Items count after deleting duplicates: ", dataframe.shape[0])
+  items_set = dataframe.groupby(by = ['customer_id'])['item'].apply(list).reset_index()
+  items_list = items_set['item'].tolist()
+  te = TransactionEncoder()
+  te_ary = te.fit_transform(items_list)
+  items_df = pd.DataFrame(te_ary, columns=te.columns_)
+  return items_df
+
 @app.route('/')
 def home():
   return render_template('FrequentItemsetMining.html')
@@ -40,29 +54,35 @@ def upload_file():
       else:
         f.save(os.path.join(uploads_dir, filename))
 
-    # Preprocess File
+    # Get the fullpath of filename
+    fullpath_filename = os.path.join(uploads_dir, filename)
 
-    # Get Value
-    generateRules = request.form.getlist('flexSwitchCheck')
-    checkbox = request.form.getlist('algorithm')
-    minSup = request.form.get('rangeInput1')
-    minThres = request.form.get('rangeInput2')
-    maxItemsets = request.form.get('floatingSelect')
+    # Get Value and change the data type
+    generateRules = request.form.getlist('flexSwitchCheck') # List
+    checkbox = request.form.getlist('algorithm') # List
+    minSup = float(request.form.get('rangeInput1')) # Float
+    minThres = float(request.form.get('rangeInput2')) # Float
+    maxItemsets = int(request.form.get('floatingSelect')) # Integer
     
     # Check Only
     print('Generate Rules: {} | MinSup: {} | MaxItemsets: {} | MinThres: {}'.format(generateRules, minSup, maxItemsets, minThres))
+    print('{} | {} | {} | {}'.format(type(generateRules), type(minSup), type(maxItemsets), type(minThres)))
     print(filename)
     print(checkbox)
 
+    # preprocess dataset
+    items_df = preproces_dataset(fullpath_filename)
 
-    # Read File
-    df = pd.read_csv(os.path.join(uploads_dir, filename))
+    # For simple demo, i will not use other algorithm
+    frequent_itemsets = apriori(items_df, min_support=minSup, use_colnames=True)
+    frequent_itemsets['length'] = frequent_itemsets['itemsets'].apply(lambda x: len(x))
 
+    # Because this will be rendered using javascript data table, we don't really need use this
+    # frequent_itemsets.sort_values(by='support', inplace=True, ascending=False)
 
-    # Before submit
-    temp = df.to_dict('records')
-    columnNames = df.columns.values
-
+    # Preprocessing before rendering to Javascript Datatable
+    temp = frequent_itemsets.to_dict('records')
+    columnNames = frequent_itemsets.columns.values
     return render_template('MiningAnalysis.html', records=temp, colnames=columnNames)
 
 if __name__ == '__main__':
