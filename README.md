@@ -39,3 +39,9 @@ Steps:
 - Upload dataset
 - Press "Upload File" button
 - Now you can see the result on Javascript Datatable (fast!)
+
+# Screenshots
+
+![alt text](https://github.com/Cravenius/frequent-itemset-mining-web-app/blob/main/screenshots/1.png?raw=true)
+
+![alt text](https://github.com/Cravenius/frequent-itemset-mining-web-app/blob/main/screenshots/2.png?raw=true)
