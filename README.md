@@ -13,7 +13,10 @@ Technology used:
 - Flask
 - Material Design Bootstrap 5
 
+For demo only:
+- Currently im only implemented the apriori algorithm
+
 To-do list:
-- preprocess the input csv file
-- pass to algorithms
-- show mining as multiple datatables
+- using other mining algorithms
+- generate rules
+- generate multiple datatables (result from different algorithm)
