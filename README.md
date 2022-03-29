@@ -2,8 +2,6 @@
 
 Disclaimer: This project is not completed yet (ongoing)
 
-Description: Simple website based data mining (frequent itemset mining) application for retail shops
-
 Reference:
 - Dataset -> https://www.kaggle.com/heeraldedhia/groceries-dataset
 - Association Rule Mining -> https://deepnote.com/@Amirhossein-Banavi/Data-Mining-Association-Rules-MwTNXNewTu2tIeBlqTe5WA
