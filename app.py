@@ -58,8 +58,8 @@ def upload_file():
     fullpath_filename = os.path.join(uploads_dir, filename)
 
     # Get Value and change the data type
-    generateRules = request.form.getlist('flexSwitchCheck') # List
     checkbox = request.form.getlist('algorithm') # List
+    generateRules = request.form.getlist('flexSwitchCheck') # List
     minSup = float(request.form.get('rangeInput1')) # Float
     minThres = float(request.form.get('rangeInput2')) # Float
     maxItemsets = int(request.form.get('floatingSelect')) # Integer
@@ -73,17 +73,22 @@ def upload_file():
     # preprocess dataset
     items_df = preproces_dataset(fullpath_filename)
 
-    # For simple demo, i will not use other algorithm
-    frequent_itemsets = apriori(items_df, min_support=minSup, use_colnames=True)
-    frequent_itemsets['length'] = frequent_itemsets['itemsets'].apply(lambda x: len(x))
+    # Prepare variable
+    apriorirecords = None
+    aprioricolnames = None
 
-    # Because this will be rendered using javascript data table, we don't really need use this
-    # frequent_itemsets.sort_values(by='support', inplace=True, ascending=False)
+    # assign data
+    if '1' in checkbox:
+      aprioridf = apriori(items_df, min_support=minSup, use_colnames=True)
+      aprioridf['length'] = aprioridf['itemsets'].apply(lambda x: len(x))
+      apriorirecords = aprioridf.to_dict('records')
+      aprioricolnames = aprioridf.columns.values
+      del aprioridf
 
-    # Preprocessing before rendering to Javascript Datatable
-    temp = frequent_itemsets.to_dict('records')
-    columnNames = frequent_itemsets.columns.values
-    return render_template('MiningAnalysis.html', records=temp, colnames=columnNames)
+    del items_df
+    return render_template('MiningAnalysis.html', algorithms=checkbox,
+      apriorirecords=apriorirecords, aprioricolnames=aprioricolnames
+      )
 
 if __name__ == '__main__':
   app.run(debug = True)

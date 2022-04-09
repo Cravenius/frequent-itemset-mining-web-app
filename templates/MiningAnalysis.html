@@ -88,35 +88,46 @@
     <!-- Background image -->
     <div id="intro" class="bg-image shadow-2-strong needs-validation">
       <div class="mask d-flex align-items-center h-100" style="background-color: rgba(0, 0, 0, 0.8);">
-        <div class="container bg-white rounded-5 shadow-5-strong p-4">
-          
-          <table id="table" class="display text-sm-center" style="width:100%">
-            <thead>
-                <tr>
-                    {% for col in colnames %}
-                    <th>{{ col }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for record in records %}
-                <tr>
-                    {% for col in colnames %}
-                    <td>{{ record[col] }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-          </table>
-        </div>
+
       </div>
     </div>
     <!-- Background image -->
-    <script>
-      $(document).ready(function () {
-          $('#table').DataTable();
-      });
-    </script>
   </header>
+
+  <!-- Apriori -->
+  {% if '1' in algorithms %}
+  <br>
+  <div class="container bg-white rounded-5 shadow-5-strong p-4">
+    <h4 class="text-sm-center">Apriori Algorithm</h4>
+    <br>
+    <table id="table" class="display " style="width:100%">
+      <thead>
+          <tr>
+              {% for col in aprioricolnames %}
+              <th>{{ col }}</th>
+              {% endfor %}
+          </tr>
+      </thead>
+      <tbody>
+          {% for record in apriorirecords %}
+          <tr>
+              {% for col in aprioricolnames %}
+              <td>{{ record[col] }}</td>
+              {% endfor %}
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <br>
+  {% endif %}
+
+
+
+  <script>
+    $(document).ready(function () {
+        $('#table').DataTable();
+    });
+  </script>
 </body>
 </html>
