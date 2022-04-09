@@ -1,6 +1,6 @@
-# frequent-itemset-mining-web-app (ongoing)
+# Frequent Itemset Mining Website Application (FIMWA)
 
-Disclaimer: This project is not completed yet (ongoing)
+Disclaimer: This is my own portfolio project, the idea is based on my university course
 
 Reference:
 - Dataset -> https://www.kaggle.com/heeraldedhia/groceries-dataset
@@ -10,23 +10,12 @@ Technologies used:
 - HTML
 - CSS
 - Javascript
-- Jquery
+- Jquery DataTable
 - Python
 - Flask
 - Material Design Bootstrap 5
 
-For demo only:
-- Currently im only implemented the apriori algorithm
-
-To-do list:
-- Using other mining algorithms
-- Generate rules
-- Generate multiple datatables (result from different algorithm)
-- Display is broken when datatable is used to render more than 10 entries
-
-# How to use 
-
-Disclaimer: Other parameter is not yet implemented
+# Installation & How to use 
 
 Steps:
 - Download the dataset and the project
