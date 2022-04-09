@@ -1,6 +1,10 @@
 # Frequent Itemset Mining Website Application (FIMWA)
 
-Disclaimer: This is my own portfolio project, the idea is based on my university course
+Disclaimer: 
+This is my own portfolio project, the idea is based on my university course.
+
+Description:
+The project was intended to look for correlations between items that customers bought, the knowledge behind the correlation can be used as a basis of decision making in business.
 
 Reference:
 - Dataset -> https://www.kaggle.com/heeraldedhia/groceries-dataset
