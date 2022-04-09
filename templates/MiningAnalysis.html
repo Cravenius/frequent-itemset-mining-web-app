@@ -71,7 +71,7 @@
     <div class="container-fluid">
       <!-- Navbar brand -->
       <a class="navbar-brand nav-link" target="_blank" href="https://mdbootstrap.com/docs/standard/">
-        <strong>MDB</strong>
+        <strong>FIMWA</strong>
       </a>
       <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarExample01"
         aria-controls="navbarExample01" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,37 +80,30 @@
       <div class="collapse navbar-collapse" id="navbarExample01">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item active">
-            <a class="nav-link" aria-current="page" href="#intro">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA" rel="nofollow"
-              target="_blank">Learn Bootstrap 5</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="https://mdbootstrap.com/docs/standard/" target="_blank">Download MDB UI KIT</a>
+            <a class="nav-link" aria-current="page" href="{{ url_for('home') }}">Home</a>
           </li>
         </ul>
 
         <ul class="navbar-nav d-flex flex-row">
           <!-- Icons -->
           <li class="nav-item me-3 me-lg-0">
-            <a class="nav-link" href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA" rel="nofollow"
+            <a class="nav-link" href="https://www.youtube.com/" rel="nofollow"
               target="_blank">
               <i class="fab fa-youtube"></i>
             </a>
           </li>
           <li class="nav-item me-3 me-lg-0">
-            <a class="nav-link" href="https://www.facebook.com/mdbootstrap" rel="nofollow" target="_blank">
+            <a class="nav-link" href="https://www.facebook.com/" rel="nofollow" target="_blank">
               <i class="fab fa-facebook-f"></i>
             </a>
           </li>
           <li class="nav-item me-3 me-lg-0">
-            <a class="nav-link" href="https://twitter.com/MDBootstrap" rel="nofollow" target="_blank">
+            <a class="nav-link" href="https://twitter.com/" rel="nofollow" target="_blank">
               <i class="fab fa-twitter"></i>
             </a>
           </li>
           <li class="nav-item me-3 me-lg-0">
-            <a class="nav-link" href="https://github.com/mdbootstrap/mdb-ui-kit" rel="nofollow" target="_blank">
+            <a class="nav-link" href="https://github.com/Cravenius/" rel="nofollow" target="_blank">
               <i class="fab fa-github"></i>
             </a>
           </li>
@@ -136,22 +129,15 @@
         <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
           <div class="d-flex justify-content-center align-items-center h-100">
             <div class="text-white text-center">
-              <h1 class="mb-3">Learn Bootstrap 5 with MDB</h1>
-              <h5 class="mb-4">Best & free guide of responsive web design</h5>
+              <h1 class="mb-3">Frequent Itemset Mining Web App</h1>
+              <h5 class="mb-4">By Cravenius</h5>
               <a
                 class="btn btn-outline-light btn-lg m-2"
-                href="https://www.youtube.com/watch?v=c9B4TPnak1A"
+                href="https://github.com/Cravenius/frequent-itemset-mining-web-app"
                 role="button"
                 rel="nofollow"
                 target="_blank"
-                >Start tutorial</a
-              >
-              <a
-                class="btn btn-outline-light btn-lg m-2"
-                href="https://mdbootstrap.com/docs/standard/"
-                target="_blank"
-                role="button"
-                >Download MDB UI KIT</a
+                >Github Documentation</a
               >
             </div>
           </div>
@@ -163,7 +149,7 @@
         <div class="mask" style="background-color: rgba(0, 0, 0, 0.3);">
           <div class="d-flex justify-content-center align-items-center h-100">
             <div class="text-white text-center">
-              <h2>You can place here any content</h2>
+              <h2>Congrats you have used this web app!</h2>
             </div>
           </div>
         </div>
@@ -183,14 +169,7 @@
         >
           <div class="d-flex justify-content-center align-items-center h-100">
             <div class="text-white text-center">
-              <h2>And cover it with any mask</h2>
-              <a
-                class="btn btn-outline-light btn-lg m-2"
-                href="https://mdbootstrap.com/docs/standard/content-styles/masks/"
-                target="_blank"
-                role="button"
-                >Learn about masks</a
-              >
+              <h2>There are 3 mining algorithms used in this project!</h2>
             </div>
           </div>
         </div>
@@ -218,7 +197,7 @@
   <div class="container bg-white rounded-5 shadow-5-strong p-4">
     <h4 class="text-sm-center">Apriori Algorithm</h4>
     <br>
-    <table id="table" class="display " style="width:100%">
+    <table id="table1" class="display " style="width:100%">
       <thead>
           <tr>
               {% for col in aprioricolnames %}
@@ -240,11 +219,67 @@
   <br>
   {% endif %}
 
+  <!-- FP-Growth -->
+  {% if '2' in algorithms %}
+  <br>
+  <div class="container bg-white rounded-5 shadow-5-strong p-4">
+    <h4 class="text-sm-center">FP-Growth Algorithm</h4>
+    <br>
+    <table id="table2" class="display " style="width:100%">
+      <thead>
+          <tr>
+              {% for col in fpgrowthcolnames %}
+              <th>{{ col }}</th>
+              {% endfor %}
+          </tr>
+      </thead>
+      <tbody>
+          {% for record in fpgrowthrecords %}
+          <tr>
+              {% for col in fpgrowthcolnames %}
+              <td>{{ record[col] }}</td>
+              {% endfor %}
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <br>
+  {% endif %}
 
+  <!-- FP-Max -->
+  {% if '3' in algorithms %}
+  <br>
+  <div class="container bg-white rounded-5 shadow-5-strong p-4">
+    <h4 class="text-sm-center">FP-Max Algorithm</h4>
+    <br>
+    <table id="table3" class="display " style="width:100%">
+      <thead>
+          <tr>
+              {% for col in fpmaxcolnames %}
+              <th>{{ col }}</th>
+              {% endfor %}
+          </tr>
+      </thead>
+      <tbody>
+          {% for record in fpmaxrecords %}
+          <tr>
+              {% for col in fpmaxcolnames %}
+              <td>{{ record[col] }}</td>
+              {% endfor %}
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <br>
+  {% endif %}
 
   <script>
     $(document).ready(function () {
-        $('#table').DataTable();
+        $('#table1').DataTable();
+        $('#table2').DataTable();
+        $('#table3').DataTable();
     });
   </script>
 </body>

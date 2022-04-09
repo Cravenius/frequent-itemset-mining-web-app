@@ -1,3 +1,7 @@
+# https://www.kaggle.com/mariekaram/apriori-association-rule
+# https://www.kaggle.com/ekrembayar/apriori-association-rules-grocery-store/notebook
+# https://www.kaggle.com/nandinibagga/apriori-algorithm
+
 import pandas as pd
 import os
 from flask import Flask, request, jsonify, render_template, flash, request, redirect, url_for
@@ -5,16 +9,6 @@ from werkzeug.utils import secure_filename
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import apriori, association_rules, fpgrowth, fpmax
 import eclat
-
-# Eclat Algorithm Source
-# https://github.com/andi611/Apriori-and-Eclat-Frequent-Itemset-Mining
-
-# Type 1 Data
-# https://www.kaggle.com/mariekaram/apriori-association-rule
-# https://www.kaggle.com/ekrembayar/apriori-association-rules-grocery-store/notebook
-
-# Type 2 Data
-# https://www.kaggle.com/nandinibagga/apriori-algorithm
 
 ALLOWED_EXTENSIONS = ['.xlsx', '.xlx', '.csv', '.xml']
 app = Flask(__name__)
@@ -76,6 +70,10 @@ def upload_file():
     # Prepare variable
     apriorirecords = None
     aprioricolnames = None
+    fpgrowthrecords = None
+    fpgrowthcolnames = None
+    fpmaxrecords = None
+    fpmaxcolnames = None
 
     # assign data
     if '1' in checkbox:
@@ -84,20 +82,58 @@ def upload_file():
         rules = association_rules(aprioridf, min_threshold=minThres)
         rules.drop(rules.columns[[2, 3]], axis = 1, inplace = True)
         rules["support"] = rules["support"].apply(lambda x: format(float(x),".5f"))
+        rules["confidence"] = rules["confidence"].apply(lambda x: format(float(x),".5f"))
         rules["lift"] = rules["lift"].apply(lambda x: format(float(x),".5f"))
         rules["leverage"] = rules["leverage"].apply(lambda x: format(float(x),".5f"))
         rules["conviction"] = rules["conviction"].apply(lambda x: format(float(x),".5f"))
         apriorirecords = rules.to_dict('records')
         aprioricolnames = rules.columns.values
+        del rules
       else:
         aprioridf['length'] = aprioridf['itemsets'].apply(lambda x: len(x))
         apriorirecords = aprioridf.to_dict('records')
         aprioricolnames = aprioridf.columns.values
       del aprioridf
 
+    if '2' in checkbox:
+      fpgrowthdf = fpgrowth(items_df, min_support=minSup, use_colnames=True, max_len=maxItemsets)
+      if 'True' in generateRules:
+        rules = association_rules(fpgrowthdf, min_threshold=minThres)
+        rules.drop(rules.columns[[2, 3]], axis = 1, inplace = True)
+        rules["support"] = rules["support"].apply(lambda x: format(float(x),".5f"))
+        rules["confidence"] = rules["confidence"].apply(lambda x: format(float(x),".5f"))
+        rules["lift"] = rules["lift"].apply(lambda x: format(float(x),".5f"))
+        rules["leverage"] = rules["leverage"].apply(lambda x: format(float(x),".5f"))
+        rules["conviction"] = rules["conviction"].apply(lambda x: format(float(x),".5f"))
+        fpgrowthrecords = rules.to_dict('records')
+        fpgrowthcolnames = rules.columns.values
+        del rules
+      else:
+        fpgrowthdf['length'] = fpgrowthdf['itemsets'].apply(lambda x: len(x))
+        fpgrowthrecords = fpgrowthdf.to_dict('records')
+        fpgrowthcolnames = fpgrowthdf.columns.values
+      del fpgrowthdf
+
+    if '3' in checkbox:
+      fpmaxdf = fpmax(items_df, min_support=minSup, use_colnames=True, max_len=maxItemsets)
+      if 'True' in generateRules:
+        rules = association_rules(fpmaxdf, support_only=True, min_threshold=minThres)
+        rules.drop(rules.columns[[2, 3]], axis = 1, inplace = True)
+        rules.drop(rules.columns[3:], axis = 1, inplace = True)
+        fpmaxrecords = rules.to_dict('records')
+        fpmaxcolnames = rules.columns.values
+        del rules
+      else:
+        fpmaxdf['length'] = fpmaxdf['itemsets'].apply(lambda x: len(x))
+        fpmaxrecords = fpmaxdf.to_dict('records')
+        fpmaxcolnames = fpmaxdf.columns.values
+      del fpmaxdf
+
     del items_df
     return render_template('MiningAnalysis.html', algorithms=checkbox,
-      apriorirecords=apriorirecords, aprioricolnames=aprioricolnames
+      apriorirecords=apriorirecords, aprioricolnames=aprioricolnames,
+      fpgrowthrecords=fpgrowthrecords, fpgrowthcolnames=fpgrowthcolnames,
+      fpmaxrecords=fpmaxrecords, fpmaxcolnames=fpmaxcolnames
       )
 
 if __name__ == '__main__':
