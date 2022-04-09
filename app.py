@@ -79,10 +79,20 @@ def upload_file():
 
     # assign data
     if '1' in checkbox:
-      aprioridf = apriori(items_df, min_support=minSup, use_colnames=True)
-      aprioridf['length'] = aprioridf['itemsets'].apply(lambda x: len(x))
-      apriorirecords = aprioridf.to_dict('records')
-      aprioricolnames = aprioridf.columns.values
+      aprioridf = apriori(items_df, min_support=minSup, use_colnames=True, max_len=maxItemsets)
+      if 'True' in generateRules:
+        rules = association_rules(aprioridf, min_threshold=minThres)
+        rules.drop(rules.columns[[2, 3]], axis = 1, inplace = True)
+        rules["support"] = rules["support"].apply(lambda x: format(float(x),".5f"))
+        rules["lift"] = rules["lift"].apply(lambda x: format(float(x),".5f"))
+        rules["leverage"] = rules["leverage"].apply(lambda x: format(float(x),".5f"))
+        rules["conviction"] = rules["conviction"].apply(lambda x: format(float(x),".5f"))
+        apriorirecords = rules.to_dict('records')
+        aprioricolnames = rules.columns.values
+      else:
+        aprioridf['length'] = aprioridf['itemsets'].apply(lambda x: len(x))
+        apriorirecords = aprioridf.to_dict('records')
+        aprioricolnames = aprioridf.columns.values
       del aprioridf
 
     del items_df
