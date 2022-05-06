@@ -169,7 +169,7 @@
         >
           <div class="d-flex justify-content-center align-items-center h-100">
             <div class="text-white text-center">
-              <h2>There are 3 mining algorithms used in this project!</h2>
+              <h2>Fast algorithm & Multiple Analysis!</h2>
             </div>
           </div>
         </div>
@@ -191,41 +191,13 @@
   </header>
   <!--Main Navigation-->
 
-  <!-- Apriori -->
+  <!-- FP-Growth -->
   {% if '1' in algorithms %}
   <br>
   <div class="container bg-white rounded-5 shadow-5-strong p-4">
-    <h4 class="text-sm-center">Apriori Algorithm</h4>
+    <h4 class="text-sm-center">FP-Growth Algorithm Result</h4>
     <br>
     <table id="table1" class="display " style="width:100%">
-      <thead>
-          <tr>
-              {% for col in aprioricolnames %}
-              <th>{{ col }}</th>
-              {% endfor %}
-          </tr>
-      </thead>
-      <tbody>
-          {% for record in apriorirecords %}
-          <tr>
-              {% for col in aprioricolnames %}
-              <td>{{ record[col] }}</td>
-              {% endfor %}
-          </tr>
-          {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <br>
-  {% endif %}
-
-  <!-- FP-Growth -->
-  {% if '2' in algorithms %}
-  <br>
-  <div class="container bg-white rounded-5 shadow-5-strong p-4">
-    <h4 class="text-sm-center">FP-Growth Algorithm</h4>
-    <br>
-    <table id="table2" class="display " style="width:100%">
       <thead>
           <tr>
               {% for col in fpgrowthcolnames %}
@@ -245,26 +217,22 @@
     </table>
   </div>
   <br>
-  {% endif %}
-
-  <!-- FP-Max -->
-  {% if '3' in algorithms %}
   <br>
   <div class="container bg-white rounded-5 shadow-5-strong p-4">
-    <h4 class="text-sm-center">FP-Max Algorithm</h4>
+    <h4 class="text-sm-center">Rules Generation Table</h4>
     <br>
-    <table id="table3" class="display " style="width:100%">
+    <table id="table2" class="display " style="width:100%">
       <thead>
           <tr>
-              {% for col in fpmaxcolnames %}
+              {% for col in rulescolnames %}
               <th>{{ col }}</th>
               {% endfor %}
           </tr>
       </thead>
       <tbody>
-          {% for record in fpmaxrecords %}
+          {% for record in rulesrecords %}
           <tr>
-              {% for col in fpmaxcolnames %}
+              {% for col in rulescolnames %}
               <td>{{ record[col] }}</td>
               {% endfor %}
           </tr>
@@ -273,13 +241,29 @@
     </table>
   </div>
   <br>
+  <div class="container text-center">
+    <br>
+    <img src="{{url_for('static', filename='heatmap.png')}}" class="img-fluid" />
+    <br>
+    <br>
+    <img src="{{url_for('static', filename='heatmap_optimal.png')}}" class="img-fluid" />
+    <br>
+    <br>
+    <img src="{{url_for('static', filename='scatter_plot.png')}}" class="img-fluid" />
+    <br>
+    <br>
+    <img src="{{url_for('static', filename='scatter_plot_optimal.png')}}" class="img-fluid" />
+    <br>
+    <br>
+    <img src="{{url_for('static', filename='parallel_coordinates.png')}}" class="img-fluid" />
+    <br>
+  </div>
   {% endif %}
 
   <script>
     $(document).ready(function () {
         $('#table1').DataTable();
         $('#table2').DataTable();
-        $('#table3').DataTable();
     });
   </script>
 </body>

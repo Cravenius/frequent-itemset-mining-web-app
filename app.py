@@ -4,12 +4,20 @@
 
 import pandas as pd
 import os
-from flask import Flask, request, jsonify, render_template, flash, request, redirect, url_for
+from flask import Flask, request, jsonify, render_template, flash, request, redirect, url_for, send_from_directory
+from sklearn import metrics
 from werkzeug.utils import secure_filename
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import apriori, association_rules, fpgrowth, fpmax
-import eclat
+import seaborn as sns
+import base64
+import matplotlib.pyplot as plt
+from io import BytesIO
+from matplotlib.figure import Figure
+from pandas.plotting import parallel_coordinates
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
+plt.switch_backend('agg')
 ALLOWED_EXTENSIONS = ['.xlsx', '.xlx', '.csv', '.xml']
 app = Flask(__name__)
 
@@ -29,6 +37,12 @@ def preproces_dataset(path_filename):
   te_ary = te.fit_transform(items_list)
   items_df = pd.DataFrame(te_ary, columns=te.columns_)
   return items_df
+
+def rules_to_coordinates(rules):
+  rules['antecedent'] = rules['antecedents'].apply(lambda antecedent: list(antecedent)[0])
+  rules['consequent'] = rules['consequents'].apply(lambda consequent: list(consequent)[0])
+  rules['rule'] = rules.index
+  return rules[['antecedent','consequent','rule']]
 
 @app.route('/')
 def home():
@@ -57,9 +71,11 @@ def upload_file():
     minSup = float(request.form.get('rangeInput1')) # Float
     minThres = float(request.form.get('rangeInput2')) # Float
     maxItemsets = int(request.form.get('floatingSelect')) # Integer
+    filter = request.form.getlist('floatingSelectMetric')[0] # List
     
     # Check Only
-    print('Generate Rules: {} | MinSup: {} | MaxItemsets: {} | MinThres: {}'.format(generateRules, minSup, maxItemsets, minThres))
+    print(filter)
+    print('MinSup: {} | MaxItemsets: {} | MinThres: {}'.format(minSup, maxItemsets, minThres))
     print('{} | {} | {} | {}'.format(type(generateRules), type(minSup), type(maxItemsets), type(minThres)))
     print(filename)
     print(checkbox)
@@ -68,72 +84,97 @@ def upload_file():
     items_df = preproces_dataset(fullpath_filename)
 
     # Prepare variable
-    apriorirecords = None
-    aprioricolnames = None
     fpgrowthrecords = None
     fpgrowthcolnames = None
-    fpmaxrecords = None
-    fpmaxcolnames = None
+    rulesrecords = None
+    rulescolnames = None
+    heatmap_plot = []
 
     # assign data
     if '1' in checkbox:
-      aprioridf = apriori(items_df, min_support=minSup, use_colnames=True, max_len=maxItemsets)
-      if 'True' in generateRules:
-        rules = association_rules(aprioridf, min_threshold=minThres)
-        rules.drop(rules.columns[[2, 3]], axis = 1, inplace = True)
-        rules["support"] = rules["support"].apply(lambda x: format(float(x),".5f"))
-        rules["confidence"] = rules["confidence"].apply(lambda x: format(float(x),".5f"))
-        rules["lift"] = rules["lift"].apply(lambda x: format(float(x),".5f"))
-        rules["leverage"] = rules["leverage"].apply(lambda x: format(float(x),".5f"))
-        rules["conviction"] = rules["conviction"].apply(lambda x: format(float(x),".5f"))
-        apriorirecords = rules.to_dict('records')
-        aprioricolnames = rules.columns.values
-        del rules
-      else:
-        aprioridf['length'] = aprioridf['itemsets'].apply(lambda x: len(x))
-        apriorirecords = aprioridf.to_dict('records')
-        aprioricolnames = aprioridf.columns.values
-      del aprioridf
-
-    if '2' in checkbox:
       fpgrowthdf = fpgrowth(items_df, min_support=minSup, use_colnames=True, max_len=maxItemsets)
-      if 'True' in generateRules:
-        rules = association_rules(fpgrowthdf, min_threshold=minThres)
-        rules.drop(rules.columns[[2, 3]], axis = 1, inplace = True)
-        rules["support"] = rules["support"].apply(lambda x: format(float(x),".5f"))
-        rules["confidence"] = rules["confidence"].apply(lambda x: format(float(x),".5f"))
-        rules["lift"] = rules["lift"].apply(lambda x: format(float(x),".5f"))
-        rules["leverage"] = rules["leverage"].apply(lambda x: format(float(x),".5f"))
-        rules["conviction"] = rules["conviction"].apply(lambda x: format(float(x),".5f"))
-        fpgrowthrecords = rules.to_dict('records')
-        fpgrowthcolnames = rules.columns.values
-        del rules
-      else:
-        fpgrowthdf['length'] = fpgrowthdf['itemsets'].apply(lambda x: len(x))
-        fpgrowthrecords = fpgrowthdf.to_dict('records')
-        fpgrowthcolnames = fpgrowthdf.columns.values
-      del fpgrowthdf
+      rules = association_rules(fpgrowthdf, min_threshold=minThres, metric=filter)
+      rules.drop(rules.columns[[2, 3]], axis = 1, inplace = True)
+      rules["support"] = rules["support"].apply(lambda x: format(float(x),".5f"))
+      rules["confidence"] = rules["confidence"].apply(lambda x: format(float(x),".5f"))
+      rules["lift"] = rules["lift"].apply(lambda x: format(float(x),".5f"))
+      rules["leverage"] = rules["leverage"].apply(lambda x: format(float(x),".5f"))
+      rules["conviction"] = rules["conviction"].apply(lambda x: format(float(x),".5f"))
+      rulesrecords = rules.to_dict('records')
+      rulescolnames = rules.columns.values
 
-    if '3' in checkbox:
-      fpmaxdf = fpmax(items_df, min_support=minSup, use_colnames=True, max_len=maxItemsets)
-      if 'True' in generateRules:
-        rules = association_rules(fpmaxdf, support_only=True, min_threshold=minThres)
-        rules.drop(rules.columns[[2, 3]], axis = 1, inplace = True)
-        rules.drop(rules.columns[3:], axis = 1, inplace = True)
-        fpmaxrecords = rules.to_dict('records')
-        fpmaxcolnames = rules.columns.values
-        del rules
-      else:
-        fpmaxdf['length'] = fpmaxdf['itemsets'].apply(lambda x: len(x))
-        fpmaxrecords = fpmaxdf.to_dict('records')
-        fpmaxcolnames = fpmaxdf.columns.values
-      del fpmaxdf
+      fpgrowthdf['length'] = fpgrowthdf['itemsets'].apply(lambda x: len(x))
+      fpgrowthrecords = fpgrowthdf.to_dict('records')
+      fpgrowthcolnames = fpgrowthdf.columns.values
+
+      # Scatter Plot
+      fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
+      sns.scatterplot(x = "support", y = "confidence", data = rules)
+      plt.margins(0.01, 0.01)
+      plt.xticks(rotation='vertical')
+      fig.savefig('static/scatter_plot.png')   # save the figure to file
+      plt.close(fig)
+
+      fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
+      sns.scatterplot(x = "support", y = "confidence", size = filter, data = rules)
+      plt.margins(0.01, 0.01)
+      plt.xticks(rotation='vertical')
+      fig.savefig('static/scatter_plot_optimal.png')   # save the figure to file
+      plt.close(fig)
+
+      # Parallel Coordinates Plot
+      fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
+      coords = rules_to_coordinates(rules)
+      parallel_coordinates(coords, 'rule')
+      plt.legend([])
+      plt.grid(True)
+      fig.savefig('static/parallel_coordinates.png')   # save the figure to file
+      plt.close(fig)
+
+      # Convert antecedents and consequents into strings
+      rules['antecedents'] = rules['antecedents'].apply(lambda a: ','.join(list(a)))
+      rules['consequents'] = rules['consequents'].apply(lambda a: ','.join(list(a)))
+
+      fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
+      support_table = rules.pivot(index='consequents', columns='antecedents', values='support')
+      support_table = support_table.fillna(0)
+      for col in support_table.columns:
+        support_table[col] = pd.to_numeric(support_table[col],errors = 'coerce')
+      print(support_table.info())
+
+      sns.heatmap(support_table, annot=True, cbar=False, ax=ax)
+      b, t = plt.ylim() 
+      b += 0.5 
+      t -= 0.5 
+      plt.ylim(b, t) 
+      plt.yticks(rotation=0)
+      plt.margins(0.01, 0.01)
+      fig.savefig('static/heatmap.png')   # save the figure to file
+      plt.close(fig)
+
+      fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
+      support_table = rules.pivot(index='consequents', columns='antecedents', values=filter)
+      support_table = support_table.fillna(0)
+      for col in support_table.columns:
+        support_table[col] = pd.to_numeric(support_table[col],errors = 'coerce')
+      print(support_table.info())
+      
+      sns.heatmap(support_table, annot=True, cbar=False, ax=ax)
+      b, t = plt.ylim() 
+      b += 0.5 
+      t -= 0.5 
+      plt.ylim(b, t) 
+      plt.yticks(rotation=0)
+      plt.margins(0.01, 0.01)
+      fig.savefig('static/heatmap_optimal.png')   # save the figure to file
+      plt.close(fig)
 
     del items_df
+    del rules
+    del fpgrowthdf
     return render_template('MiningAnalysis.html', algorithms=checkbox,
-      apriorirecords=apriorirecords, aprioricolnames=aprioricolnames,
       fpgrowthrecords=fpgrowthrecords, fpgrowthcolnames=fpgrowthcolnames,
-      fpmaxrecords=fpmaxrecords, fpmaxcolnames=fpmaxcolnames
+      rulesrecords=rulesrecords, rulescolnames=rulescolnames
       )
 
 if __name__ == '__main__':
