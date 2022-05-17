@@ -13,6 +13,16 @@
   <!-- MDB JS -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.js"></script>
 
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-tooltip@0.16.0/build/vega-tooltip.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc12"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@3"></script>
+  <script src="https://vega.github.io/datalib/datalib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="crossorigin="anonymous"></script>
+
   <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
@@ -194,14 +204,14 @@
   <!-- FP-Growth -->
   {% if '1' in algorithms %}
   <br>
-  <div class="container bg-white rounded-5 shadow-5-strong p-4">
+  <div class="container rounded-5 shadow-5-strong p-4 table-responsive-xl">
     <h4 class="text-sm-center">FP-Growth Algorithm Result</h4>
     <br>
-    <table id="table1" class="display " style="width:100%">
-      <thead>
+    <table class="table table-striped table-hover table-sm" id="table1" class="display " style="width:100%">
+      <thead class="thead-dark">
           <tr>
               {% for col in fpgrowthcolnames %}
-              <th>{{ col }}</th>
+              <th scope="col">{{ col }}</th>
               {% endfor %}
           </tr>
       </thead>
@@ -218,14 +228,14 @@
   </div>
   <br>
   <br>
-  <div class="container bg-white rounded-5 shadow-5-strong p-4">
+  <div class="container rounded-5 shadow-5-strong p-4 table-responsive-xl">
     <h4 class="text-sm-center">Rules Generation Table</h4>
     <br>
-    <table id="table2" class="display " style="width:100%">
-      <thead>
+    <table class="table table-striped table-hover table-sm" id="table2" class="display " style="width:100%">
+      <thead class="thead-dark">
           <tr>
               {% for col in rulescolnames %}
-              <th>{{ col }}</th>
+              <th scope="col">{{ col }}</th>
               {% endfor %}
           </tr>
       </thead>
@@ -241,30 +251,47 @@
     </table>
   </div>
   <br>
-  <div class="container text-center">
-    <br>
-    <img src="{{url_for('static', filename='heatmap.png')}}" class="img-fluid" />
-    <br>
-    <br>
-    <img src="{{url_for('static', filename='heatmap_optimal.png')}}" class="img-fluid" />
-    <br>
-    <br>
-    <img src="{{url_for('static', filename='scatter_plot.png')}}" class="img-fluid" />
-    <br>
-    <br>
-    <img src="{{url_for('static', filename='scatter_plot_optimal.png')}}" class="img-fluid" />
-    <br>
-    <br>
-    <img src="{{url_for('static', filename='parallel_coordinates.png')}}" class="img-fluid" />
-    <br>
-  </div>
-  {% endif %}
-
   <script>
     $(document).ready(function () {
         $('#table1').DataTable();
         $('#table2').DataTable();
     });
   </script>
+  <div class="container text-center">
+    <br>
+    <div id="plotly-heatmap-support" class="bg-white rounded-5 shadow-5-strong p-4">
+      <script>
+        var graph1 = {{ heatmap_support | safe }};
+        var config = {responsive: true};
+        Plotly.plot('plotly-heatmap-support', graph1, {}, config);
+      </script>
+    </div>
+    <br>
+    <div id="plotly-heatmap-filter" class="bg-white rounded-5 shadow-5-strong p-4">
+      <script>
+        var graph2 = {{ heatmap_filter | safe }};
+        var config = {responsive: true};
+        Plotly.plot('plotly-heatmap-filter', graph2, {}, config);
+      </script>
+    </div>
+    <br>
+    <div id="plotly-scatter-support" class="bg-white rounded-5 shadow-5-strong p-4">
+      <script>
+        var graph3 = {{ scatter_support | safe }};
+        var config = {responsive: true};
+        Plotly.plot('plotly-scatter-support', graph3, {}, config);
+      </script>
+    </div>
+    <br>
+    <div id="plotly-scatter-filter" class="bg-white rounded-5 shadow-5-strong p-4">
+      <script>
+        var graph4 = {{ scatter_filter | safe }};
+        var config = {responsive: true};
+        Plotly.plot('plotly-scatter-filter', graph4, {}, config);
+      </script>
+    </div>
+    <br>
+  </div>
+  {% endif %}
 </body>
 </html>
