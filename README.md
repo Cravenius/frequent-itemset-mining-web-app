@@ -18,6 +18,7 @@ Technologies used:
 - Python
 - Flask
 - Material Design Bootstrap 5
+- Plotly
 
 # Installation & How to use 
 
@@ -30,16 +31,3 @@ Steps:
 - Set the parameter and upload dataset
 - Press "Upload File" button
 - Now you can see the result
-
-
-# Screenshots
-
-![alt text](https://github.com/Cravenius/frequent-itemset-mining-web-app/blob/main/screenshots/1.png?raw=true)
-
-![alt text](https://github.com/Cravenius/frequent-itemset-mining-web-app/blob/main/screenshots/2.png?raw=true)
-
-![alt text](https://github.com/Cravenius/frequent-itemset-mining-web-app/blob/main/screenshots/3.png?raw=true)
-
-![alt text](https://github.com/Cravenius/frequent-itemset-mining-web-app/blob/main/screenshots/4.png?raw=true)
-
-![alt text](https://github.com/Cravenius/frequent-itemset-mining-web-app/blob/main/screenshots/5.png?raw=true)
